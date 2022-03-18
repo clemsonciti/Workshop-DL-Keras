@@ -22,7 +22,7 @@ Log into the Palmetto Command Line Shell
 Run the following `qsub` command
 
 ```bash
-$ qsub -I -l select=1:ncpus=8:mem=15gb,:chip_type=e5-2680v4,walltime=2:00:00
+$ qsub -I -l select=1:ncpus=8:mem=15gb:chip_type=e5-2680v4,walltime=2:00:00
 ```
 
 - Depending on cluster availability, you can set chip_type to be `e5-2670v2`, `e5-2680v3`,
