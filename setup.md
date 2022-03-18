@@ -25,7 +25,7 @@ Run the following `qsub` command
 $ qsub -I -l select=1:ncpus=8:mem=15gb:chip_type=e5-2680v4,walltime=2:00:00
 ```
 
-- Depending on cluster availability, you can set chip_type to be `e5-2670v2`, `e5-2680v3`,
+- Depending on cluster availability, you can set chip_type to be  `e5-2680v3`,
 `e5-2680v4`, `6148g`, and `6248g`. 
 - You can use `whatsfree` and `freeres` to identify an appropriate `chip_type` setting. 
 
