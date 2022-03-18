@@ -5,10 +5,10 @@ permalink: index.html  # Is the only page that doesn't follow the pattern /:path
 ---
 
 > ## Instructor
-> - **Instructor**: Tue Vu
+> - **Instructor**: Linh Ngo
 > - **Office**: 2119 Barre Hall, Clemson University
 > - **Office Hours**: Wed 8.30-11.30 Zoom; Fri 9.00-10am
-> - **Email**: tuev@clemson.edu
+> - **Email**: lngo@clemson.edu
 {: .prereq}
 
 > ## Workshop Description
