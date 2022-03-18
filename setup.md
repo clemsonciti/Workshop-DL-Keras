@@ -37,7 +37,6 @@ $ conda create -n tf_2.5 python=3.8 -y
 $ source activate tf_2.5
 $ export PYTHONNOUSERSITE=1
 $ pip install tensorflow==2.5 seaborn scikit-learn matplotlib jupyterlab
-$ pip install keras==2.8.0
 ```
 
 => Note: while using **skln** conda environment, if we are missing anything, we can always come back and update using **pip install**
