@@ -12,7 +12,7 @@ keypoints:
 ## Using Keras to solve a Classification Model
 
 ### Prepare the data
-Here we use iris data from ANN and Classification espisode in our previous Machine Learning class with sklearn:
+Here we use iris data from ANN and Classification episode in our previous Machine Learning class with sklearn:
 
 ```python
 from sklearn.datasets import load_iris
@@ -57,9 +57,8 @@ X_test_scaled = scaler.transform(X_test)
 ### Let's use Keras's Sequential model with Dense layers
 
 ```python
-import keras
-from keras.models import Sequential
-from keras.layers import Dense
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 ```
 
 ### Create a Sequential model with 3 layers:
@@ -112,3 +111,4 @@ Y_test = enc.inverse_transform(y_test)
 import sklearn
 sklearn.metrics.accuracy_score(Y_pred,Y_test)
 ```
+

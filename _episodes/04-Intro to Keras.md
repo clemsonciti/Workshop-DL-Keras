@@ -29,8 +29,8 @@ import keras
 For regular Deep Learning model, we use fully connected or Dense layer:
 
 ```python
-from keras.models import Sequential
-from keras.layers import Dense
+from tensorflow.keras.models import Sequential
+from tensroflow.keras.layers import Dense
 ```
 
 ### Sequential

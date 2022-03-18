@@ -74,11 +74,11 @@ The tutorial following the [keras website](https://keras.io/examples/timeseries/
 ```python
 import numpy as np
 import pandas as pd
-import keras
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
-from keras.layers import Bidirectional
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import LSTM
+from tensorflow.keras.layers import Bidirectional
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -91,7 +91,7 @@ from numpy import array
 #### Loading Jena climate station data:
 
 ```python
-df = pd.read_csv("/software/src/tuev/data/jena_climate_2009_2016.csv")
+df = pd.read_csv("/zfs/citi/workshop_data/python_ml/jena_climate_2009_2016.csv")
 ```
 
 #### Check for any missing value
@@ -115,7 +115,7 @@ print(df1.isna().sum())
 Now treat missing value with KNN Imputer 
 
 
-```
+```python
 #Treat missing values using KNN Imputer method
 from sklearn.impute import KNNImputer
 imputer = KNNImputer(n_neighbors=15, weights="uniform")
@@ -291,7 +291,7 @@ y_test = scaled_features.iloc[start_ytest:]["T (degC)"]
 For training data set, the updated keras (with tensorflow version 2.3 and above) has built-in function to prepare for time series modeling using given batch size and the length for historical data.
 
 ```python
-dataset_train = keras.preprocessing.timeseries_dataset_from_array(
+dataset_train = tf.keras.preprocessing.timeseries_dataset_from_array(
     x_train,
     y_train,
     sequence_length=sequence_length,
@@ -306,13 +306,14 @@ Here, we utilize the preprocessing time series feature of keras to split trainin
 ##### Training
 
 ```python
-dataset_train = keras.preprocessing.timeseries_dataset_from_array(
+dataset_train = tf.keras.preprocessing.timeseries_dataset_from_array(
     x_train,
     y_train,
     sequence_length=sequence_length,
     sampling_rate = step,
     batch_size=batch_size,
 )
+```
 
 ```python
 for batch in dataset_train.take(1):
@@ -330,7 +331,7 @@ Target shape: (256,)
 ##### Testing
 
 ```python
-dataset_test = keras.preprocessing.timeseries_dataset_from_array(
+dataset_test = tf.keras.preprocessing.timeseries_dataset_from_array(
     x_test,
     y_test,
     sequence_length=sequence_length,
@@ -355,12 +356,12 @@ Target shape: (256,)
 #### Build Deep learning model with LSTM framework:
 
 ```python
-inputs = keras.layers.Input(shape=(inputs.shape[1], inputs.shape[2]))
-lstm_out = keras.layers.LSTM(32, activation="relu")(inputs)
-outputs = keras.layers.Dense(1)(lstm_out)
+inputs = tf.keras.layers.Input(shape=(inputs.shape[1], inputs.shape[2]))
+lstm_out = tf.keras.layers.LSTM(32, activation="relu")(inputs)
+outputs = tf.keras.layers.Dense(1)(lstm_out)
 
-model = keras.Model(inputs=inputs, outputs=outputs)
-model.compile(optimizer=keras.optimizers.Adam(learning_rate=learning_rate), loss="mse")
+model = tf.keras.Model(inputs=inputs, outputs=outputs)
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), loss="mse", metrics=['accuracy'])
 model.summary()    
 ```
 
@@ -390,28 +391,6 @@ history = model.fit(
 )
 ```
 
-```
-Epoch 1/10
-983/983 [==============================] - 119s 121ms/step - loss: 0.0082 - val_loss: 0.0049
-Epoch 2/10
-983/983 [==============================] - 119s 121ms/step - loss: 0.0039 - val_loss: 0.0039
-Epoch 3/10
-983/983 [==============================] - 118s 120ms/step - loss: 0.0034 - val_loss: 0.0038
-Epoch 4/10
-983/983 [==============================] - 117s 119ms/step - loss: 0.0031 - val_loss: 0.0038
-Epoch 5/10
-983/983 [==============================] - 117s 119ms/step - loss: 0.0029 - val_loss: 0.0038
-Epoch 6/10
-983/983 [==============================] - 117s 119ms/step - loss: 0.0028 - val_loss: 0.0038
-Epoch 7/10
-983/983 [==============================] - 117s 119ms/step - loss: 0.0027 - val_loss: 0.0038
-Epoch 8/10
-983/983 [==============================] - 117s 119ms/step - loss: 0.0027 - val_loss: 0.0037
-Epoch 9/10
-983/983 [==============================] - 117s 119ms/step - loss: 0.0026 - val_loss: 0.0037
-Epoch 10/10
-983/983 [==============================] - 117s 119ms/step - loss: 0.0026 - val_loss: 0.0037
-```
 
 #### Visualize the Training & Testing loss with 10 different epoches?
 
@@ -438,13 +417,13 @@ visualize_loss(history, "Training and Validation Loss")
 
 Save LSTM model:
 ```python
-model.save('/home/tuev/LSTM_Jena.keras')
+model.save('LSTM_Jena.keras')
 ```
 
 Load LSTM model
 
 ```python
-model = keras.models.load_model('/home/tuev/LSTM_Jena.keras')
+model = tf.keras.models.load_model('LSTM_Jena.keras')
 ```
 
 

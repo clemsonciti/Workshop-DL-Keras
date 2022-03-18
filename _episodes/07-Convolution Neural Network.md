@@ -89,31 +89,31 @@ More information can be found [here](https://towardsdatascience.com/a-comprehens
 ```python
 import keras
 import numpy as np
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.utils import to_categorical
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.utils import to_categorical
 ```
 
 ### Import convolution, max pooling and flatten as mentioned above:
 ```python
-from keras.layers.convolutional import Conv2D # convolutional layers to reduce image size
-from keras.layers.convolutional import MaxPooling2D # Max pooling layers to further reduce image size
-from keras.layers import Flatten # flatten data from 2D to column for Dense layer
+from tensorflow.keras.layers import Conv2D # convolutional layers to reduce image size
+from tensorflow.keras.layers import MaxPooling2D # Max pooling layers to further reduce image size
+from tensorflow.keras.layers import Flatten # flatten data from 2D to column for Dense layer
 ```
 
 ### Load CIFAR10 data
 ```python
-from keras.datasets import cifar10
+from tensorflow.keras.datasets import cifar10
 
 # load data
 (X_train, y_train), (X_test, y_test) = cifar10.load_data()
 
 # Normalized data to range (0, 1):
 X_train, X_test = X_train/255, X_test/255
-X_train.shape
-X_test.shape
-y_train.shape
-y_test.shape
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
 ```
 
 Sample ploting:
@@ -143,8 +143,8 @@ Using One Hot Encoding from Keras to convert the label:
 ```python
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
-y_train.shape
-y_test.shape
+print(y_train.shape)
+print(y_test.shape)
 ```
 
 ### Construct Convolutional Neural Network
@@ -159,10 +159,13 @@ model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 model.add(Flatten())
 model.add(Dense(100, activation='relu'))
 #Output layer contains 10 different number from 0-9
-model.add(Dense(10, activation='softmax'))
+model.add(Dense(10, activation='relu'))
+model.summary()
+```
 
+```python
 # compile model
-model.compile(optimizer='adam', loss='categorical_crossentropy',  metrics=['accuracy'])                            
+model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),  metrics=['accuracy'])                                                       
 ```
 
 ### Train model
@@ -173,29 +176,6 @@ Fit the model
 # fit the model
 model_CNN = model.fit(X_train, y_train, epochs=10, 
                     validation_data=(X_test, y_test))
-```
-
-```
-Epoch 1/10
-1563/1563 [==============================] - 7s 4ms/step - loss: 1.5531 - accuracy: 0.4444 - val_loss: 1.3197 - val_accuracy: 0.5285
-Epoch 2/10
-1563/1563 [==============================] - 6s 4ms/step - loss: 1.2657 - accuracy: 0.5534 - val_loss: 1.2416 - val_accuracy: 0.5575
-Epoch 3/10
-1563/1563 [==============================] - 6s 4ms/step - loss: 1.1759 - accuracy: 0.5868 - val_loss: 1.2053 - val_accuracy: 0.5776
-Epoch 4/10
-1563/1563 [==============================] - 6s 4ms/step - loss: 1.1125 - accuracy: 0.6091 - val_loss: 1.2001 - val_accuracy: 0.5796
-Epoch 5/10
-1563/1563 [==============================] - 6s 4ms/step - loss: 1.0671 - accuracy: 0.6244 - val_loss: 1.1442 - val_accuracy: 0.5966
-Epoch 6/10
-1563/1563 [==============================] - 6s 4ms/step - loss: 1.0343 - accuracy: 0.6374 - val_loss: 1.1755 - val_accuracy: 0.5926
-Epoch 7/10
-1563/1563 [==============================] - 6s 4ms/step - loss: 1.0012 - accuracy: 0.6477 - val_loss: 1.1348 - val_accuracy: 0.6029
-Epoch 8/10
-1563/1563 [==============================] - 6s 4ms/step - loss: 0.9710 - accuracy: 0.6615 - val_loss: 1.1379 - val_accuracy: 0.6060
-Epoch 9/10
-1563/1563 [==============================] - 6s 4ms/step - loss: 0.9397 - accuracy: 0.6699 - val_loss: 1.1469 - val_accuracy: 0.5988
-Epoch 10/10
-1563/1563 [==============================] - 6s 4ms/step - loss: 0.9208 - accuracy: 0.6772 - val_loss: 1.1538 - val_accuracy: 0.6080
 ```
 
 ### Evaluate the output
@@ -234,7 +214,7 @@ model.save('CNN_CIFAR10.keras')
 
 Reload model:
 ```python
-model_new = keras.models.load_model('CNN_CIFAR10.keras')
+model_new = tf.keras.models.load_model('CNN_CIFAR10.keras')
 ```
 
 ### Evaluate model with testing data
@@ -283,8 +263,25 @@ model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(Flatten())
 model.add(Dense(100, activation='relu'))
 #Output layer contains 10 different number from 0-9
-model.add(Dense(10, activation='softmax'))
+model.add(Dense(10, activation='relu'))
 
 # compile model
-model.compile(optimizer='adam', loss='categorical_crossentropy',  metrics=['accuracy'])                            
+model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),  metrics=['accuracy'])     
+model.fit(X_train, y_train, epochs=10, 
+                    validation_data=(X_test, y_test))                   
+```
+
+```python
+predictions = model.predict(X_test)
+ypreds = np.argmax(predictions, axis=1)
+
+plt.figure(figsize=(10,10))
+for i in range(25):
+    plt.subplot(5,5,i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.grid(False)
+    plt.imshow(X_test[i])
+    plt.xlabel(class_names[ypreds[i]])
+plt.show()
 ```

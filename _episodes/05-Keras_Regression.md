@@ -12,41 +12,26 @@ keypoints:
 ## Using Keras to solve a Regression Model
 
 ### Prepare the data
-Here we use airquality data from ANN and Regression espisode in our previous Machine Learning class with sklearn:
+Here we use [Pima Indian Diabetes database](https://www.kaggle.com/uciml/pima-indians-diabetes-database) data:
+
+- We need to omit the header line of the data. 
 
 ```python
-import pandas as pd
 import numpy as np
-from sklearn.impute import KNNImputer
-from sklearn.model_selection import train_test_split
-
-data_df = pd.DataFrame(pd.read_csv('https://raw.githubusercontent.com/vuminhtue/Machine-Learning-Python/master/data/r_airquality.csv'))
-
-imputer = KNNImputer(n_neighbors=2, weights="uniform")
-data_knnimpute = pd.DataFrame(imputer.fit_transform(data_df))
-data_knnimpute.columns = data_df.columns
-
-X_train, X_test, y_train, y_test = train_test_split(data_knnimpute[['Temp','Wind','Solar.R']],
-                                                    data_knnimpute['Ozone'],
-                                                    train_size=0.6,random_state=123)
+numpy.random.seed(42)
+np_data = np.loadtxt("/zfs/citi/workshop_data/python_ml/diabetes.csv", delimiter=",", skiprows=1)
+# split into input (X) and output (Y) variables
+X = dataset[:,0:8]
+Y = dataset[:,8]
 ```
 
-Now, we need to scale the input data:
-
-```python
-from sklearn.preprocessing import MinMaxScaler
-
-scaler = MinMaxScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled  = scaler.fit_transform(X_test)
-```
 
 ### Let's use Keras's Sequential model with Dense layers
 
 ```python
-import keras
-from keras.models import Sequential
-from keras.layers import Dense
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 ```
 
 ### Create a Sequential model with 3 layers:
@@ -54,18 +39,18 @@ from keras.layers import Dense
 ```python
 # Create a Sequential model
 model = Sequential()
-# Create a first hidden layer, the input for the first hidden layer is input layer which has 3 variables:
-model.add(Dense(50, activation='relu', input_shape=(3,)))
+# Create a first hidden layer, the input for the first hidden layer is input layer which has 8 variables:
+model.add(Dense(12, input_dim = 8, activation='relu'))
 # Create a second hidden layer
-model.add(Dense(40, activation='relu'))
-# Create an output layer with only 1 variable:
-model.add(Dense(1))
+model.add(Dense(8, activation='relu'))
+# Create a third hidden layer
+model.add(Dense(1, activation='sigmoid'))
 ```
 
 ### Compile model
 
 ```python
-model.compile(optimizer='adam', loss='mean_squared_error')
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 ```
 
 Here, **adam** optimization is a stochastic gradient descent method that is based on adaptive estimation of first-order and second-order moments.
@@ -90,31 +75,34 @@ The purpose of **loss** functions is to compute the quantity that a model should
 ### Fit model
 
 ```python
-model.fit(X_train_scaled, y_train, epochs=100, verbose=1,
-               validation_data=(X_test_scaled,y_test))
+model.fit(X, Y, validation_split=0.33, epochs=150, batch_size=10)
 ```
 
 Here: 
 - epochs: the number of iteration 
-- verbose: 'auto', 0, 1, or 2. Verbosity mode. 0 = silent, 1 = progress bar, 2 = one line per epoch. 'auto' defaults to 1 for most cases, but 2 when used with ParameterServerStrategy. Note that the progress bar is not particularly useful when logged to a file, so verbose=2 is recommended when not running interactively (eg, in a production environment).
+- verbose: 'auto', 0, 1, or 2. Verbosity mode. 0 = silent, 1 = progress bar, 
+2 = one line per epoch. 'auto' defaults to 1 for most cases, but 2 when used with 
+ParameterServerStrategy. Note that the progress bar is not particularly 
+useful when logged to a file, so verbose=2 is recommended when not running 
+interactively (eg, in a production environment).
+- batch_size: Number of samples per batch of computation. If unspecified, batch_size will default to 32.
 
-There are alternative way if user do not want to split input data into training/testing:
+You can also create custom training/testing dataset: 
 
 ```python
-model.fit(X_scaled, y, validation_split=0.3, epochs=100, verbose=1)
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=123)
+# create model
+model = Sequential()
+model.add(Dense(12, input_dim=8, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+# Compile model
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+# Fit the model
+model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=150, batch_size=10)
 ```
  
-### Evaluate model
-Evaluate the testing set using given loss function
-```python
-results = model.evaluate(X_test_scaled, y_test, verbose=1)
-print("test loss:", results)
-```
-
-### Predict output
-```python
-predictions = model.predict(X_test_scaled)
-```
 
 ### Save & load keras model
 ```python
@@ -126,4 +114,25 @@ del model  # deletes the existing model
 # returns a compiled model
 # identical to the previous one
 model = load_model('my_model.keras')
+```
+
+### Cross validation using K-Fold
+
+```python
+from sklearn.model_selection import StratifiedKFold
+
+kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=123)
+cvscores = []
+for train, test in kfold.split(X, Y):
+    model = Sequential()
+    model.add(Dense(12, input_dim=8, activation='relu'))
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.fit(X[train], Y[train], epochs=150, batch_size=10, verbose=0)
+    scores = model.evaluate(X[test], Y[test], verbose=0)
+    print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+    cvscores.append(scores[1] * 100)
+print("%.2f%% (+/- %.2f%%)" % (numpy.mean(cvscores), numpy.std(cvscores)))
+
 ```

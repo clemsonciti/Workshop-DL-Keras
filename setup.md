@@ -4,80 +4,72 @@ title: Setup
 Setup Keras kernel in Palmetto's JupyterLab
 ---
 
-### Install Keras from existing skln conda environment (ML_SKLN kernel)
-Open terminal and activate the conda environment or using the consol with ML_SKLN kernel
-
-```
-$ pip install tensorflow==2.3.0
-$ pip install keras==2.4.3
-```
-
-Check if keras is correctly installed:
-
-```
->>> import keras
->>> print(keras.__version__)
-```
-
-### Install Keras from new conda environment
 We will use Palmetto cluster for this workshop with Jupyter Lab.
-Please follow this guideline to create a new conda environment and install **keras** package.
 
-1. Open terminal (MobaXTerm for Windows OS/Terminal for MacOS & Linux platform)
-2. Login to Palmetto login node: your_username@login001
-3. Request for a compute node with simple configuration:
+Please follow this guideline to create a new conda environment and install scikit-learn package.
+Log into [Clemson's OpenOnDemand](https://openod02.palmetto.clemson.edu/)
 
+<img src="fig/setup/01.png" style="height:400px">
 
-```
-$ qsub -I -l select=1:ncpus=8:mem=32gb:interconnect=any,walltime=24:00:00
-```
+Under `Clusters` select `Palmetto Shell Access`
 
-4. Load module:
+<img src="fig/setup/02.png" style="height:400px">
 
+Log into the Palmetto Command Line Shell
 
-```
-$ module load anaconda3/2020.07-gcc/8.3.1
-```
+<img src="fig/setup/03.png" style="height:800px">
 
-5. Create conda environment:
+Run the following `qsub` command
 
-
-```
-$ conda create -n my_keras python=3.8
+```bash
+$ qsub -I -l select=1:ncpus=8:mem=15gb,:chip_type=e5-2680v4,walltime=2:00:00
 ```
 
-6. Once done, activate the environment and install numpy, pandas, scikit-learn, matplotlib, seaborn and keras
+- Depending on cluster availability, you can set chip_type to be `e5-2670v2`, `e5-2680v3`,
+`e5-2680v4`, `6148g`, and `6248g`. 
+- You can use `whatsfree` and `freeres` to identify an appropriate `chip_type` setting. 
 
+Next, run the following commands. 
 
+```bash
+$ module load anaconda3/2021.05-gcc/8.3.1 cuda/11.1.0-gcc/8.4.1 cudnn/8.1.0.77-11.2-linux-x64-gcc/8.4.1
+$ conda create -n tf_2.5 python=3.8 -y
+$ source activate tf_2.5
+$ export PYTHONNOUSERSITE=1
+$ pip install tensorflow==2.5 seaborn scikit-learn matplotlib jupyterlab
+$ pip install keras==2.8.0
 ```
-$ source activate my_keras
-$ pip install numpy pandas scikit-learn seaborn
-$ pip install tensorflow==2.3.0
-$ pip install keras==2.4.3
-$ conda install matplotlib 
-```
 
-=> Note: while using **my_keras** conda environment, if we are missing anything, we can always come back and update using **pip install**
+=> Note: while using **skln** conda environment, if we are missing anything, we can always come back and update using **pip install**
 or **conda install** method.
 
-Check if keras is correctly installed:
+Go back to OpenOnDemand Dashboard, under `Interactive Apps` select `Jupyter Notebook`
 
-```
->>> import keras
->>> print(keras.__version__)
-```
+<img src="fig/setup/04.png" style="height:500px">
 
-7. Last step: create Jupyter Hub kernel in order to work with Jupyter Notebook
+Make the selection on the Jupyter Notebook App as follows:
+
+- `Anaconda Version`: `anaconda3/2021.05-gcc/8.3.1`
+- `List of modules to be loaded, separate by an empty space`: `cuda/11.1.0-gcc/8.4.1 cudnn/8.1.0.77-11.2-linux-x64-gcc/8.4.1` 
+- `Path to Python virtual/conda environment`: `source activate tf_2.5`
+- `Notebook Workflow`: `Standard Jupyter Notebook`
+- `Number of resource chunks (select)`: `1`
+- `CPU cores per chunk (ncpus)`: `8`
+- `Amount of memory per chunk (mem)`: `15gb`
+- `Interconnect`: `any`
+- `Extra PBS resource allocation request`: `:chip_type=e5-268v4`
+- `Walltime`: `04:00:00`
+
+Click `Launch`. 
+
+Click `Connect to Jupyter` once the job is ready. 
+
+<img src="fig/setup/05.png" style="height:300px">
+
+Open a new notebook using the default `Python 3` kernel. Test for the valid installation of `tensorflow`. 
+
+<img src="fig/setup/06.png" style="height:250px">
 
 
-```
-$ conda install jupyter
-$ python -m ipykernel install --user --name my_keras --display-name "DL_Keras"
-```
-
-8. Open Jupyter Lab in Palmetto, login and see if you have **DL_Keras** kernel created
-https://www.palmetto.clemson.edu/jhub/hub/home
-
-![image](https://user-images.githubusercontent.com/43855029/117865975-9159fe80-b264-11eb-94e7-bcbf17f1e55c.png)
 {% include links.md %}
 
