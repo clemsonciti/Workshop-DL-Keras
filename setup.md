@@ -25,8 +25,7 @@ Run the following `qsub` command
 $ qsub -I -l select=1:ncpus=8:mem=15gb:chip_type=e5-2680v4,walltime=2:00:00
 ```
 
-- Depending on cluster availability, you can set chip_type to be  `e5-2680v3`,
-`e5-2680v4`, `6148g`, and `6248g`. 
+- Depending on cluster availability, you can set chip_type to be `e5-2680v4`, `6148g`, and `6248g`. 
 - You can use `whatsfree` and `freeres` to identify an appropriate `chip_type` setting. 
 
 Next, run the following commands. 
@@ -56,7 +55,7 @@ Make the selection on the Jupyter Notebook App as follows:
 - `CPU cores per chunk (ncpus)`: `8`
 - `Amount of memory per chunk (mem)`: `15gb`
 - `Interconnect`: `any`
-- `Extra PBS resource allocation request`: `:chip_type=e5-268v4`
+- `Extra PBS resource allocation request`: `:chip_type=e5-2680v4`
 - `Walltime`: `04:00:00`
 
 Click `Launch`. 
