@@ -87,7 +87,6 @@ More information can be found [here](https://towardsdatascience.com/a-comprehens
 
 ### Importing libraries
 ```python
-import keras
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -165,7 +164,7 @@ model.summary()
 
 ```python
 # compile model
-model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),  metrics=['accuracy'])                                                       
+model.compile(optimizer='adam', loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),  metrics=['accuracy'])                                                       
 ```
 
 ### Train model
@@ -266,7 +265,7 @@ model.add(Dense(100, activation='relu'))
 model.add(Dense(10, activation='relu'))
 
 # compile model
-model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),  metrics=['accuracy'])     
+model.compile(optimizer='adam', loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),  metrics=['accuracy'])     
 model.fit(X_train, y_train, epochs=10, 
                     validation_data=(X_test, y_test))                   
 ```
