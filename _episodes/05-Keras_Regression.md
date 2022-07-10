@@ -18,11 +18,11 @@ Here we use [Pima Indian Diabetes database](https://www.kaggle.com/uciml/pima-in
 
 ```python
 import numpy as np
-numpy.random.seed(42)
+np.random.seed(42)
 np_data = np.loadtxt("/zfs/citi/workshop_data/python_ml/diabetes.csv", delimiter=",", skiprows=1)
 # split into input (X) and output (Y) variables
-X = dataset[:,0:8]
-Y = dataset[:,8]
+X = np_data[:,0:8]
+Y = np_data[:,8]
 ```
 
 
@@ -106,7 +106,7 @@ model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=150, batch_s
 
 ### Save & load keras model
 ```python
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 
 model.save('my_model.keras')  # creates a HDF5 file 'my_model.h5'
 del model  # deletes the existing model
