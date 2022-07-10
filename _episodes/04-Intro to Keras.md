@@ -13,7 +13,7 @@ keypoints:
 ## Import Keras
 
 ```python
-import keras
+import tensorflow.keras
 ```
 
 ## Layers in Deep Learning
@@ -30,7 +30,7 @@ For regular Deep Learning model, we use fully connected or Dense layer:
 
 ```python
 from tensorflow.keras.models import Sequential
-from tensroflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense
 ```
 
 ### Sequential
